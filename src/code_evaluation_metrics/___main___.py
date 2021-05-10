@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import os
 import sys
 from src.code_evaluation_metrics.run_app import run
 
@@ -15,11 +16,21 @@ parser.add_argument(
     help="The directory of filtered json file that contains repositories information"
 )
 
+parser.add_argument(
+    "-t", "--tool",
+    dest="tool",
+    type=str,
+    required=True,
+    help="The tool which is under evaluating"
+)
 
-def parse_args(json_directory):
+
+def parse_args(json_directory, tool):
     try:
         assert isinstance(json_directory, str)
         assert json_directory.strip() != ""
+        assert isinstance(tool, str)
+        assert tool.strip() != ""
     except:
         parser.print_help()
         raise KeyError
@@ -28,7 +39,7 @@ def parse_args(json_directory):
 def main():
     args = vars(parser.parse_args())
     try:
-        parse_args(args["json-file-directory"])
+        parse_args(args["json-file-directory"], args["tool"])
     except KeyError:
         sys.exit(0)
-    sys.exit(run(args["json-file-directory"]))
+    sys.exit(run(args["json-file-directory"], args["tool"]))

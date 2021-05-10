@@ -2,5 +2,17 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_program/workbox" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/Making-Websites-With-October-CMS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/abp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/braintree-web-drop-in" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/code-gov-web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/kibitzr" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/mercury-parser" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/web-self-service-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/webclient" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/webdriver-manager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/webextension-polyfill" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/workbox" vcs="Git" />
   </component>
 </project>

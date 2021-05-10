@@ -1,0 +1,8 @@
+Language, == files, != files, + files, - files, == blank, != blank, + blank, - blank, == comment, != comment, + comment, - comment, == code, != code, + code, - code, "github.com/AlDanial/cloc v 1.86 T=13.7802128791809 s"
+Handlebars, 0, 3, 2, 2, 0, 0, 6, 6, 0, 0, 0, 0, 38, 6, 63, 63, 
+TypeScript, 0, 0, 0, 130, 0, 0, 0, 1308, 0, 0, 0, 3707, 0, 0, 0, 5089, 
+Markdown, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+YAML, 0, 1, 0, 0, 0, 0, 0, 3, 0, 1, 0, 1, 12, 5, 4, 4, 
+HTML, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 9, 4, 3, 0, 
+JSON, 0, 27, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 17033, 5855, 5001, 5059, 
+JavaScript, 0, 96, 150, 42, 0, 0, 1570, 762, 1361, 50, 3961, 1317, 9172, 582, 7154, 4263, 
