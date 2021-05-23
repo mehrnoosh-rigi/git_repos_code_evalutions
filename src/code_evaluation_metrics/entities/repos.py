@@ -31,7 +31,8 @@ class GitRepository:
         try:
             os.chdir("./results/cloned_programs")
             # cloc = os.system(f"cloc {self.github_repo['name']}")
-            os.system(f"cloc {self.github_repo['name']} --csv --out=../csv/{self.tool}/cloc/{self.github_repo['name']}")
+            git_name = self.github_repo['name']
+            os.system(f"cloc {self.github_repo['name']} --csv --out=../csv/{self.tool}/{git_name}/cloc/{self.github_repo['name']}")
             os.chdir("../..")
             # print("current dir", os.getcwd())
             # with open(f"csv/self.github_repo['name']", "w", newline="") as csvfile:

@@ -3,16 +3,54 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_program/workbox" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/BotFramework-WebChat" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/Making-Websites-With-October-CMS" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/Mypal" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/Project-WebCube" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/UXP" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/abp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/awe" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/aws-lex-web-ui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/braintree-web-drop-in" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/code-gov-web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/codesandbox-client" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/cylc-ui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/fast" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/ferrum" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/gandalf.web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/grpc-web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/guess" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/harp.gl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/ignite-ui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/kibitzr" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/lighthouse" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/lion" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/mercury-parser" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/ml-workspace" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/music-website" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/one-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/pig" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/react-rainbow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/requestium" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/ring-ui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/rod" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/scinote-web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/silverfox" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/spectrum-web-components" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/stratos" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/tracker-radar" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/ui5-webcomponents" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/vendure" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/vtk-js" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/web-apps" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/web-apps-old" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/web-self-service-app" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/webclient" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/webdriver-manager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/webex-js-sdk" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/webextension-polyfill" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/results/cloned_programs/website" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/results/cloned_programs/workbox" vcs="Git" />
   </component>
 </project>
