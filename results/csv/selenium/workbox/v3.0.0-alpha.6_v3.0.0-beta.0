@@ -1,5 +1,5 @@
-Language, == files, != files, + files, - files, == blank, != blank, + blank, - blank, == comment, != comment, + comment, - comment, == code, != code, + code, - code, "github.com/AlDanial/cloc v 1.86 T=0.659096956253052 s"
-HTML, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 3, 24, 2, 
-JavaScript, 0, 58, 19, 1, 0, 0, 290, 89, 1100, 13, 86, 399, 3889, 75, 1371, 338, 
+Language, == files, != files, + files, - files, == blank, != blank, + blank, - blank, == comment, != comment, + comment, - comment, == code, != code, + code, - code, "github.com/AlDanial/cloc v 1.86 T=0.72899603843689 s"
 JSON, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 452, 41, 0, 0, 
 Handlebars, 0, 0, 4, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 84, 0, 
+JavaScript, 0, 58, 19, 1, 0, 0, 290, 89, 1100, 13, 86, 399, 3889, 75, 1371, 338, 
+HTML, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 3, 24, 2, 

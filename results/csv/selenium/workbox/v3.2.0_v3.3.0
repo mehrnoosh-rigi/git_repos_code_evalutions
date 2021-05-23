@@ -1,6 +1,6 @@
-Language, == files, != files, + files, - files, == blank, != blank, + blank, - blank, == comment, != comment, + comment, - comment, == code, != code, + code, - code, "github.com/AlDanial/cloc v 1.86 T=11.0669538974762 s"
+Language, == files, != files, + files, - files, == blank, != blank, + blank, - blank, == comment, != comment, + comment, - comment, == code, != code, + code, - code, "github.com/AlDanial/cloc v 1.86 T=10.0756468772888 s"
+YAML, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 27, 4, 0, 0, 
 JSON, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15253, 3951, 1180, 1421, 
 HTML, 0, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 13, 35, 
-JavaScript, 0, 104, 9, 5, 0, 0, 87, 77, 3031, 83, 136, 64, 10231, 375, 550, 476, 
-YAML, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 27, 4, 0, 0, 
 Markdown, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 
+JavaScript, 0, 104, 9, 5, 0, 0, 87, 77, 3031, 83, 136, 64, 10231, 375, 550, 476, 
