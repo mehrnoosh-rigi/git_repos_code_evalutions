@@ -1,6 +1,6 @@
 import json
 import pathlib
-from src.code_evaluation_metrics.entities.repos import GitRepository
+from src.repo_tag_diffs.entities.repos import GitRepository
 
 
 def evaluate_repo(repo, tool):

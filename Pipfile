@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 gitpython = "*"
+pandas = "*"
+xlsxwriter = "*"
+xlrd = "*"
+openpyxl = "*"
 
 [dev-packages]
 
