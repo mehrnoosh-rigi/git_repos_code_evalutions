@@ -33,7 +33,7 @@ class GitRepository:
             # cloc = os.system(f"cloc {self.github_repo['name']}")
             git_name = self.github_repo['name']
             os.system(f"cloc {self.github_repo['name']} --csv --out=../csv/{self.tool}/{git_name}/cloc/{self.github_repo['name']}")
-            os.chdir("../..")
+            os.chdir("..")
             # print("current dir", os.getcwd())
             # with open(f"csv/self.github_repo['name']", "w", newline="") as csvfile:
             # with open("csv/workbox", 'w', newline='\n') as csvfile:
@@ -52,7 +52,7 @@ class GitRepository:
                 # print("current dir", os.getcwd())
                 git_name = self.github_repo['name']
                 os.system(f"cloc --git --diff {self.tags[i]} {self.tags[i+1]} --csv --out=../../csv/{self.tool}/{git_name}/{self.tags[i]}_{self.tags[i+1]}")
-                os.chdir("../../..")
+                os.chdir("../..")
 
         except Exception as e:
             logging.info("tags different", e)
@@ -60,4 +60,4 @@ class GitRepository:
     def delete_repo(self):
         os.chdir("./results/cloned_programs")
         os.system(f"rm -rf {self.github_repo['name']}")
-        os.chdir("../..")
+        os.chdir("..")
