@@ -2,7 +2,7 @@
 import argparse
 import os
 import sys
-from src.get_programming_languages_precentage.get_precentage import run
+from src.repo_evaluation_metrics.run_evaluation import run
 
 parser = argparse.ArgumentParser(
     description="evaluation of usage of programming language"
