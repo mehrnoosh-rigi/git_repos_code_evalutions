@@ -1,7 +1,5 @@
-*.pyc
-/venv/*
-/venv/lib/python3.7/site-packages/
-/venv/bin/
-/venv/include/
-/venv/lib/
-/venv/src/
+**/*.pyc
+*.cpython-37.pyc
+venv/*
+venv/lib/python3.7/site-packages/git/__pycache__/__init__.cpython-37.pyc
+
