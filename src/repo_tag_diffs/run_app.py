@@ -6,10 +6,11 @@ from src.entities.repos import GitRepository
 def evaluate_repo(repo, tool):
     git_repository = GitRepository(repo, tool)
     git_repository.clone_repo()
-    git_repository.get_lines_of_code()
-    git_repository.list_tags()
-    git_repository.tags_diff()
-    git_repository.delete_repo()
+
+    # git_repository.get_lines_of_code()
+    # git_repository.list_tags()
+    # git_repository.tags_diff()
+    # git_repository.delete_repo()
 
 
 def run(json_files_directory, tool):
