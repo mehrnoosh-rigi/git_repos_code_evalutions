@@ -13,7 +13,7 @@ def evaluate_repo(repo, tool):
     git_repository.clone_repo()
     git_repository.go_to_prj_root()
     git_repository.get_lines_of_code()
-
+    git_repository.find_test_files()
 
     #find files that contains test files
     #find files that import those test files

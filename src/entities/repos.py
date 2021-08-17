@@ -56,7 +56,6 @@ class GitRepository:
             # (out, err) = proc.communicate()
             # self.append_to_result_file("LOC", out)
 
-
             # os.chdir("./results/cloned_programs")
             # git_name = self.github_repo['name']
             os.system(f"cloc {self.github_repo['name']} --json --out=./cloc.json")
@@ -64,8 +63,6 @@ class GitRepository:
             with open("./cloc.json", "r+") as outfile:
                 file_data = json.load(outfile)
                 self.append_to_result_file("cloc", file_data)
-
-
 
             # print("current dir", os.getcwd())
             # with open(f"csv/self.github_repo['name']", "w", newline="") as csvfile:
@@ -79,7 +76,24 @@ class GitRepository:
             logging.info("cloc lines of code", e)
 
     def find_test_files(self):
-        
+        proc = subprocess.Popen([f"git grep -i --name-only {self.tool}"],
+                                shell=True,
+                                stdin=None,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        result = proc.stdout.readlines()
+        valid_files = []
+        if len(result) >= 1:
+            for line in result:
+                decoded_line = line.decode("utf-8")
+                valid_file = ".json" not in decoded_line and ".md" not in decoded_line \
+                             and ".npmignore" not in decoded_line \
+                             and ".gitignore" not in decoded_line
+
+                if valid_file:
+                    valid_files.append(decoded_line)
+
+                # next step find files that call valid files
 
     def tags_diff(self):
         try:
