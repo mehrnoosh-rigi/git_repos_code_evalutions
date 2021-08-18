@@ -10,6 +10,22 @@ def back_to_main_dir():
     return os.chdir("../../..")
 
 
+def do_bash_cmd_return_result_in_array(command):
+    proc = subprocess.Popen([command],
+                            shell=True,
+                            stdin=None,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+
+    return proc.stdout.readlines()
+
+def check_validation(decoded_line):
+    ".json" not in decoded_line and ".md" not in decoded_line \
+    and ".npmignore" not in decoded_line \
+    and ".gitignore" not in decoded_line \
+    and ".yml" not in decoded_line
+
+
 class GitRepository:
     def __init__(self, github_repo, tool):
         self.github_repo = github_repo
@@ -76,24 +92,27 @@ class GitRepository:
             logging.info("cloc lines of code", e)
 
     def find_test_files(self):
-        proc = subprocess.Popen([f"git grep -i --name-only {self.tool}"],
-                                shell=True,
-                                stdin=None,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-        result = proc.stdout.readlines()
+        result = do_bash_cmd_return_result_in_array(f"git grep -i --name-only {self.tool}")
         valid_files = []
         if len(result) >= 1:
             for line in result:
                 decoded_line = line.decode("utf-8")
-                valid_file = ".json" not in decoded_line and ".md" not in decoded_line \
-                             and ".npmignore" not in decoded_line \
-                             and ".gitignore" not in decoded_line
 
-                if valid_file:
-                    valid_files.append(decoded_line)
+                if check_validation(decoded_line):
+                    pure_file_path = decoded_line.strip("\n")
+                    valid_files.append(pure_file_path)
+                    slash_index = pure_file_path.rfind("/") + 1
+                    dot_index = pure_file_path.rfind(".")
+                    pure_file_name = pure_file_path[slash_index:dot_index]
+                    files_import_tests = do_bash_cmd_return_result_in_array(f"git grep -i --name-only {pure_file_name}")
+                    if len(files_import_tests) >= 1:
+                        for file in files_import_tests:
+                            decoded_file_name = file.decode("utf-8")
+                            if check_validation(decoded_file_name):
+                                print(">>>>>>>>>>>>>>>>>>>>>")
+                                print(decoded_file_name)
+    #                           //to do check correctness
 
-                # next step find files that call valid files
 
     def tags_diff(self):
         try:
