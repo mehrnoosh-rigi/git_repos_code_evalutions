@@ -1,10 +1,9 @@
 import json
 import pathlib
-from src.entities.repos import GitRepository, back_to_main_dir
+from src.entities.repos import GitRepository
 
-
-#
 # def get_test_files(repo, tools):
+from src.repo_evaluation_metrics.helpers import back_to_main_dir
 
 
 def evaluate_repo(repo, tool):
@@ -15,8 +14,7 @@ def evaluate_repo(repo, tool):
     git_repository.list_tags()
     git_repository.get_lines_of_code()
     test_files = git_repository.find_test_files()
-    git_repository.compute_TLR(test_files)
-
+    git_repository.TLR(test_files)
 
     # find files that contains test files
     # find files that import those test files
