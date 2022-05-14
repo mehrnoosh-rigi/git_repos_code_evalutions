@@ -1,4 +1,5 @@
 import json
+import os
 import pathlib
 from src.entities.repos import GitRepository
 
@@ -14,14 +15,14 @@ def evaluate_repo(repo, tool):
     git_repository.list_tags()
     git_repository.get_lines_of_code()
     test_files = git_repository.find_test_files()
-    git_repository.TLR(test_files)
+    git_repository.save_TLR_metrics(test_files)
 
     # find files that contains test files
     # find files that import those test files
     # count the lines of test code for those files in master branch
     # count for each branch lines of test code and all lines of code
 
-    # git_repository.tags_diff()
+    git_repository.tags_diff()
     back_to_main_dir()
     git_repository.delete_repo()
 
@@ -29,8 +30,8 @@ def evaluate_repo(repo, tool):
 def run(json_files_directory, tool):
     for path in pathlib.Path(json_files_directory).iterdir():
         # print("path", path.is_file())
-        # if path.is_file():
-        # print("path is file", path)
+        if path.is_file():
+            print("path is file", path)
         with open(path) as f:
             repos = json.load(f)
             for repo in repos:

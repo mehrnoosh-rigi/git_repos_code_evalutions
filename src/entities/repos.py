@@ -24,6 +24,7 @@ class GitRepository:
             logging.info("cloning error:", e)
 
     def go_to_prj_root(self):
+        print("Project root", os.getcwd())
         os.chdir(self.project_root)
 
     def create_result_file(self):
@@ -122,7 +123,7 @@ class GitRepository:
         except Exception as e:
             logging.info("tags different", e)
 
-    def TLR(self, test_files):
+    def save_TLR_metrics(self, test_files):
         # For each tag, in self.tags:
         # 1- Save cloc TTLi
         # 2- Save PLOCi
