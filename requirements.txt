@@ -1,0 +1,7 @@
+PySimpleGUI~=4.60.3
+pandas~=1.2.4
+XlsxWriter~=1.4.3
+openpyxl~=3.0.7
+six~=1.16.0
+urllib3~=1.26.4
+setuptools~=56.0.0

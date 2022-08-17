@@ -4,6 +4,7 @@ import pathlib
 from src.entities.repos import GitRepository
 
 # def get_test_files(repo, tools):
+from src.gui.dashboard import dashboard
 from src.repo_evaluation_metrics.helpers import back_to_main_dir
 
 
@@ -14,8 +15,8 @@ def evaluate_repo(repo, tool):
     git_repository.go_to_prj_root()
     git_repository.list_tags()
     git_repository.get_lines_of_code()
-    test_files = git_repository.find_test_files()
-    git_repository.save_TLR_metrics(test_files)
+    test_files = git_repository.find_test_files_for_each_tag()
+    git_repository.take_metrics_for_each_tag(test_files)
 
     # find files that contains test files
     # find files that import those test files
@@ -23,16 +24,18 @@ def evaluate_repo(repo, tool):
     # count for each branch lines of test code and all lines of code
 
     git_repository.tags_diff()
+    git_repository.calculate_TLR()
     back_to_main_dir()
-    git_repository.delete_repo()
+    # git_repository.delete_repo()
 
 
-def run(json_files_directory, tool):
-    for path in pathlib.Path(json_files_directory).iterdir():
-        # print("path", path.is_file())
-        if path.is_file():
-            print("path is file", path)
-        with open(path) as f:
-            repos = json.load(f)
-            for repo in repos:
-                evaluate_repo(repo, tool)
+def evaluate_file(json_files_directory):
+    tool = "selenium" if "selenium" in json_files_directory else "cypress"
+    with open(json_files_directory) as f:
+        repos = json.load(f)
+        for repo in repos:
+            evaluate_repo(repo, tool)
+
+
+def run():
+    dashboard()
