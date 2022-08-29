@@ -20,5 +20,8 @@ def check_validation(decoded_line):
     return ".json" not in decoded_line and ".md" not in decoded_line \
            and ".npmignore" not in decoded_line \
            and ".gitignore" not in decoded_line \
-           and ".yml" not in decoded_line
+           and ".yml" not in decoded_line \
+           and ".txt" not in decoded_line \
+           and "LICENSE" not in decoded_line \
+           and ".conf" not in decoded_line
 

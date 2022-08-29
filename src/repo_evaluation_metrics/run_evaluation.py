@@ -8,10 +8,13 @@ from src.gui.dashboard import dashboard
 from src.repo_evaluation_metrics.helpers import back_to_main_dir
 
 
-def evaluate_repo(repo, tool):
-    git_repository = GitRepository(repo, tool)
-    git_repository.create_result_file()
+def clone_repo(git_repository):
     git_repository.clone_repo()
+    return git_repository
+
+
+def evaluate_repo(git_repository):
+    git_repository.create_result_file()
     git_repository.go_to_prj_root()
     git_repository.list_tags()
     git_repository.get_lines_of_code()
@@ -26,15 +29,11 @@ def evaluate_repo(repo, tool):
     git_repository.tags_diff()
     git_repository.calculate_TLR()
     back_to_main_dir()
-    # git_repository.delete_repo()
+    return git_repository
 
 
-def evaluate_file(json_files_directory):
-    tool = "selenium" if "selenium" in json_files_directory else "cypress"
-    with open(json_files_directory) as f:
-        repos = json.load(f)
-        for repo in repos:
-            evaluate_repo(repo, tool)
+def delete_repo(git_repository):
+    git_repository.delete_repo()
 
 
 def run():
