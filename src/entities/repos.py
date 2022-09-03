@@ -22,16 +22,16 @@ class GitRepository:
         """
         try:
             Git("results/cloned_programs").clone(self.github_repo["clone_url"])
-            logging.info("clone", self.github_repo["clone_url"])
+            print("clone", self.github_repo["clone_url"])
         except Exception as e:
-            logging.info("cloning error:", e)
+            print("cloning error:", e)
 
     def go_to_prj_root(self):
         """
         change the directory of project to the cloned program
         """
         os.chdir(self.project_root)
-        logging.info("Directory changed to:", os.getcwd())
+        print("Directory changed to:", os.getcwd())
 
     def create_result_file(self):
         """
@@ -39,7 +39,8 @@ class GitRepository:
         """
         repo_name = self.github_repo["name"]
         with open(f"results/repos_statistics/{self.tool}/{repo_name}.json", "w") as outfile:
-            json.dump({"repo_name": repo_name}, outfile)
+            data = {'repo_name': repo_name}
+            json.dump(data, outfile)
 
     def append_to_result_file(self, key, value):
         """
@@ -59,7 +60,13 @@ class GitRepository:
                 # convert back to json.
                 json.dump(file_data, outfile, indent=4)
         except Exception as e:
-            logging.error("exception:", e)
+            print("Error in appending to the result file", e)
+
+    def checkout_last_tag(self):
+        """
+        Put the head of git in the last tag commit
+        """
+        Git(os.getcwd()).checkout(self.tags[len(self.tags) - 1])
 
     def list_tags(self):
         """
@@ -74,12 +81,11 @@ class GitRepository:
             try:
                 dirty = subprocess.check_output(cmd).decode().strip()
                 self.tags = dirty.splitlines()
-
             except subprocess.CalledProcessError:
-                logging.error("Unable to get git tags")
+                print("Unable to get git tags")
                 exit(1)
         except Exception as e:
-            logging.info("list tags error", e)
+            print("list tags error", e)
 
     def get_lines_of_code(self, tag="master", key_subject="CLOC"):
         """
@@ -88,13 +94,22 @@ class GitRepository:
         :param key_subject: if key_subject is passed it's save as passed value if not it's CLOC by default value
         """
         try:
-            os.system(f"cloc {self.github_repo['name']} --json --out=./cloc.json")
-            with open("./cloc.json", "r+") as outfile:
+            os.chdir("../")
+
+            os.system(f"cloc {self.github_repo['name']} "
+                      f"--ignore-whitespace "
+                      f"--ignore-case "
+                      f"--json "
+                      f"--out={self.github_repo['name']}/cloc.json")
+
+            os.chdir(f"./{self.github_repo['name']}")
+
+            with open("cloc.json", "r+") as outfile:
                 file_data = json.load(outfile)
-                self.append_to_result_file(f"{key_subject}_{tag}", file_data)
+            self.append_to_result_file(f"{key_subject}_{tag}", file_data)
 
         except Exception as e:
-            logging.info("cloc lines of code", e)
+            print("cloc lines of code", e)
 
     # def calculate_Tdiff(self, tag, file_data):
     #
@@ -113,7 +128,7 @@ class GitRepository:
                         # if index > 0:
                         #     self.calculate_Tdiff(tag, file_data)
                 except Exception as e:
-                    logging.info("cloc lines of code for test file", e)
+                    print("cloc lines of code for test file", e)
 
     def find_test_files_for_each_tag(self):
         """
@@ -125,14 +140,17 @@ class GitRepository:
         try:
             for tag in self.tags:
                 Git(os.getcwd()).checkout(tag)
-                result = helpers.do_bash_cmd_return_result_in_array(f"git grep -i --name-only '{self.tool}'")
+                print("git status::", helpers.do_bash_cmd_return_result_in_array("git status"))
+                print("current tag:", tag)
+                result = helpers.do_bash_cmd_return_result_in_array(f"git grep -i --name-only {self.tool}")
                 valid_files = []
+                print("result", result)
+                # I am here, it seems the command doesn't return anuthing, I didn't delete repose try to check them
                 if len(result) >= 1:
                     for line in result:
                         decoded_line = line.decode("utf-8")
                         if helpers.check_validation(decoded_line):
                             pure_file_path = decoded_line.strip("\n")
-                            print("pure file path::::", pure_file_path)
                             valid_files.append(pure_file_path)
                             slash_index = pure_file_path.rfind("/") + 1
                             dot_index = pure_file_path.rfind(".")
@@ -149,10 +167,10 @@ class GitRepository:
                                         print("decoded file name:::::", decoded_file_name)
                                         pure_file_path = decoded_file_name.strip("\n")
                                         valid_files.append(pure_file_path)
-                print("valid files:::::", valid_files)
+                            print("valid files:::::", valid_files)
                 return valid_files
         except Exception as err:
-            logging.error(err)
+            print("error in take file tests", err)
 
     def tags_diff(self):
         try:
@@ -164,7 +182,7 @@ class GitRepository:
                 os.chdir("../..")
 
         except Exception as e:
-            logging.info("tags different", e)
+            print("tags different", e)
 
     def take_metrics_for_each_tag(self, test_files):
         # For each tag, in self.tags:
@@ -195,7 +213,7 @@ class GitRepository:
                     self.append_to_result_file(f"TLR_{tag}", int(current_tag_TTL) / int(current_tag_PLOC))
                 except Exception as error:
                     self.append_to_result_file(f"TLR_{tag}", 0)
-                    print(error)
+                    print("error in TLR calculation", error)
                     pass
 
     def calculate_MTLR(self):
@@ -216,5 +234,5 @@ class GitRepository:
                         # if it's always zero something is wrong
 
                 except Exception as error:
-                    print(error)
+                    print("Error in MTLR calculation:", error)
                     pass
