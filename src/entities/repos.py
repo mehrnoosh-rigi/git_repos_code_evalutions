@@ -7,6 +7,48 @@ from git import Git
 from src.repo_evaluation_metrics import helpers
 
 
+def find_files_that_import_test_file(folders, valid_files):
+    try:
+        for line in folders:
+            print("I am here", line)
+
+            # Remove unnecessary files and take pure file name
+            decoded_line = line.decode("utf-8")
+            if helpers.check_validation(decoded_line):
+                pure_file_path = decoded_line.strip("\n")
+                valid_files.append(pure_file_path)
+                slash_index = pure_file_path.rfind("/") + 1
+                dot_index = pure_file_path.rfind(".")
+                pure_file_name = pure_file_path[slash_index:dot_index]
+
+                # find files that import test files
+                files_import_tests = helpers.do_bash_cmd_return_result_in_array(
+                    f"git grep -i --name-only {pure_file_name}")
+
+                if len(files_import_tests) >= 1:
+                    for file in files_import_tests:
+                        decoded_file_name = file.decode("utf-8")
+                        if helpers.check_validation(decoded_file_name):
+                            print("decoded file name:::::", decoded_file_name)
+                            pure_file_path = decoded_file_name.strip("\n")
+                            valid_files.append(pure_file_path)
+        return valid_files
+    except Exception as error:
+        print("error in find files which import test files", error)
+
+
+def find_test_directory_for_each_tag():
+    try:
+        result = helpers.do_bash_cmd_return_result_in_array("git ls-files | xargs -n 1 dirname | uniq")
+
+        test_folders = list(filter(lambda folder: ("test" in str(folder)), result))
+        valid_files = []
+        return find_files_that_import_test_file(test_folders, valid_files)
+
+    except Exception as error:
+        print(f"Error in find text directory {error}")
+
+
 class GitRepository:
     def __init__(self, github_repo, tool):
         self.github_repo = github_repo
@@ -140,35 +182,34 @@ class GitRepository:
         try:
             for tag in self.tags:
                 Git(os.getcwd()).checkout(tag)
-                print("git status::", helpers.do_bash_cmd_return_result_in_array("git status"))
-                print("current tag:", tag)
                 result = helpers.do_bash_cmd_return_result_in_array(f"git grep -i --name-only {self.tool}")
-                valid_files = []
-                print("result", result)
+                valid_files = find_test_directory_for_each_tag()
                 # I am here, it seems the command doesn't return anuthing, I didn't delete repose try to check them
                 if len(result) >= 1:
-                    for line in result:
-                        decoded_line = line.decode("utf-8")
-                        if helpers.check_validation(decoded_line):
-                            pure_file_path = decoded_line.strip("\n")
-                            valid_files.append(pure_file_path)
-                            slash_index = pure_file_path.rfind("/") + 1
-                            dot_index = pure_file_path.rfind(".")
-                            pure_file_name = pure_file_path[slash_index:dot_index]
-
-                            # find files that import test files
-                            files_import_tests = helpers.do_bash_cmd_return_result_in_array(
-                                f"git grep -i --name-only {pure_file_name}")
-
-                            if len(files_import_tests) >= 1:
-                                for file in files_import_tests:
-                                    decoded_file_name = file.decode("utf-8")
-                                    if helpers.check_validation(decoded_file_name):
-                                        print("decoded file name:::::", decoded_file_name)
-                                        pure_file_path = decoded_file_name.strip("\n")
-                                        valid_files.append(pure_file_path)
-                            print("valid files:::::", valid_files)
-                return valid_files
+                    find_files_that_import_test_file(result, valid_files)
+                    # Remove unnecessary files and take pure file name
+                    # for line in result:
+                    #     decoded_line = line.decode("utf-8")
+                    #     if helpers.check_validation(decoded_line):
+                    #         pure_file_path = decoded_line.strip("\n")
+                    #         valid_files.append(pure_file_path)
+                    #         slash_index = pure_file_path.rfind("/") + 1
+                    #         dot_index = pure_file_path.rfind(".")
+                    #         pure_file_name = pure_file_path[slash_index:dot_index]
+                    #
+                    #         # find files that import test files
+                    #         files_import_tests = helpers.do_bash_cmd_return_result_in_array(
+                    #             f"git grep -i --name-only {pure_file_name}")
+                    #
+                    #         if len(files_import_tests) >= 1:
+                    #             for file in files_import_tests:
+                    #                 decoded_file_name = file.decode("utf-8")
+                    #                 if helpers.check_validation(decoded_file_name):
+                    #                     print("decoded file name:::::", decoded_file_name)
+                    #                     pure_file_path = decoded_file_name.strip("\n")
+                    #                     valid_files.append(pure_file_path)
+                    #         print("valid files:::::", valid_files)
+            return valid_files
         except Exception as err:
             print("error in take file tests", err)
 
