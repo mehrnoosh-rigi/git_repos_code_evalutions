@@ -8,7 +8,7 @@ from src.entities.repos import GitRepository
 def dashboard():
     layout = [
         [sg.Input(), sg.FileBrowse("Select Result File", key="-IN-")],
-        [sg.Button("Clone Repos"), sg.Button("Evaluate Repo"), sg.Button("Delete Repo"), sg.Cancel()],
+        [sg.Button("Clone Repos"), sg.Button("Evaluate Repos"), sg.Button("Delete Repos"), sg.Cancel()],
     ]
 
     window = sg.Window("WEB APPLICATION SCRIPTED TESTS ANALYZES", layout, default_element_size=(150, 200))
@@ -17,6 +17,7 @@ def dashboard():
         event, values = window.read()
         if event is None or event == "Cancel" or event == sg.WIN_CLOSED:
             break
+
         try:
             file_path = values["-IN-"]
             tool = "selenium" if "selenium" in file_path else "cypress"
@@ -30,20 +31,19 @@ def dashboard():
                             clone_repo(git_repository=git_repository)
                         except OSError:
                             print("OS Error", OSError)
-                    elif event == "Evaluate Repo":
+                    elif event == "Evaluate Repos":
                         try:
                             from src.repo_evaluation_metrics.run_evaluation import evaluate_repo
                             evaluate_repo(git_repository)
                         except NotImplementedError:
                             print("Not Implemented Error", NotImplementedError)
-                    elif event == "Delete Repo":
+                    elif event == "Delete Repos":
                         try:
                             from src.repo_evaluation_metrics.run_evaluation import delete_repo
                             delete_repo(git_repository)
                         except OSError:
                             print("Deletion Error", OSError)
         except Exception as error:
-
             print("error>>>", error)
 
 
