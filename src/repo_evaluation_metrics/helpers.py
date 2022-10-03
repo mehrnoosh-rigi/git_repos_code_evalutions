@@ -23,5 +23,18 @@ def check_validation(decoded_line):
            and ".yml" not in decoded_line \
            and ".txt" not in decoded_line \
            and "LICENSE" not in decoded_line \
-           and ".conf" not in decoded_line
+           and ".conf" not in decoded_line \
+           and ".png" not in decoded_line \
+           and "css" not in decoded_line \
+           and ".njk" not in decoded_line \
+           and ".eslintrc" not in decoded_line \
+           and ".d" not in decoded_line \
+           and "/img" not in decoded_line \
+           and "index" not in decoded_line \
+           and ".pack" not in decoded_line \
+           and ".idx" not in decoded_line \
+
+
+
+
 

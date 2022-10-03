@@ -11,7 +11,7 @@ def dashboard():
         [sg.Button("Clone Repos"), sg.Button("Evaluate Repos"), sg.Button("Delete Repos"), sg.Cancel()],
     ]
 
-    window = sg.Window("WEB APPLICATION SCRIPTED TESTS ANALYZES", layout, default_element_size=(150, 200))
+    window = sg.Window("WEB APPLICATION SCRIPTED TESTS ANALYZES", layout, default_element_size=(150, 900))
 
     while True:
         event, values = window.read()
