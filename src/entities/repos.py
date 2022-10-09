@@ -1,11 +1,11 @@
-import logging
 import os
 import json
 import subprocess
 from git import Git
-from pathlib import Path
 
 from src.repo_evaluation_metrics import helpers
+
+TTli = 0
 
 
 def find_files_that_import_test_file(folders, valid_files):
@@ -47,6 +47,25 @@ def find_test_directory_for_each_tag():
         print(f"Error in find text directory {error}")
 
 
+def get_lines_of_code_for_test_file(file_path):
+    path = os.getcwd()
+    file_name = os.path.basename(file_path)
+    for root, dirs, files in os.walk(path):
+        if file_name in files:
+            try:
+                os.system(f"cloc {file_path} --json --out=./cloc.json")
+                with open("./cloc.json", "r+") as outfile:
+                    file_data = json.load(outfile)
+                    global TTli
+                    TTli = file_data["header"]["n_lines"] + TTli
+                    # if index > 0:
+                    #     self.calculate_Tdiff(tag, file_data)
+            except Exception as e:
+                print("Cloc lines of code for test file", e)
+
+    return TTli
+
+
 class GitRepository:
     def __init__(self, github_repo, tool):
         self.github_repo = github_repo
@@ -54,7 +73,6 @@ class GitRepository:
         self.out_put_file = f"results/repos_statistics/{self.tool}/{self.github_repo['name']}.json"
         self.project_root = f"results/cloned_programs/{github_repo['name']}"
         self.tags = []
-        self.TLR = [{}]
 
     def clone_repo(self):
         """
@@ -156,21 +174,6 @@ class GitRepository:
     #
     #     self.append_to_result_file(f"Tdiff_{tag}", file_data["header"]["n_lines"])
 
-    def get_lines_of_code_for_test_file(self, tag, file_path):
-        path = os.getcwd()
-        file_name = os.path.basename(file_path)
-        for root, dirs, files in os.walk(path):
-            if file_name in files:
-                try:
-                    os.system(f"cloc {file_path} --json --out=./cloc.json")
-                    with open("./cloc.json", "r+") as outfile:
-                        file_data = json.load(outfile)
-                        self.append_to_result_file(f"TTL_{tag}_{file_name}", file_data["header"]["n_lines"])
-                        # if index > 0:
-                        #     self.calculate_Tdiff(tag, file_data)
-                except Exception as e:
-                    print("Cloc lines of code for test file", e)
-
     def find_test_files_for_each_tag(self):
         """
         Find each files that contains the tool inside, by any Import for each tag release
@@ -191,9 +194,8 @@ class GitRepository:
         except Exception as err:
             print("Error in take file tests", err)
 
-    def tool_tags_diff(self, index, tag, file_path):
+    def tool_tags_diff(self, index, file_path):
         """
-        :param tag:
         :param file_path: test file
         :param index: tag index
         :return: Save to result file for each tag the tags differences between i and i-1
@@ -240,35 +242,32 @@ class GitRepository:
             Git(os.getcwd()).checkout(tag)
             self.get_lines_of_code(tag, "PLOC")  # PLOCi
             for file in test_files:
+                # it should calculate for each tag all results
+                TTLi = get_lines_of_code_for_test_file(file)  # TTLi
+                self.append_to_result_file(f"TTL_{tag}", TTLi)
+
                 if index > 0:
-                    # it should calculate for each tag all results
-                    self.get_lines_of_code_for_test_file(tag, file)  # TTLi
-                    # self.tool_tags_diff(index, tag, file)  # TDIFFi, i+1
+                    self.tool_tags_diff(index, file)  # TDIFFi, i+1
             self.production_lines_of_code_tags_diff(index)  # PDIFFi, i+1
-        # self.calculate_TLR()
+        self.calculate_TLR()
 
     def delete_repo(self):
         os.system(f"rm -rf ./results/cloned_programs/{self.github_repo['name']}")
 
     def calculate_TLR(self):
-        repo_name = self.github_repo["name"]
-        print("Directory in TLR>>>", os.getcwd())
-        with open(f"./{repo_name}.json", "r") as result_file:
+        with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
             data = json.load(result_file)
-            for tag in self.tags:
-                print("Hereee>>>>>")
-                print("data:::", data)
-                try:
-                    current_tag_TTL = data[f"TTL_{tag}"]
-                    current_tag_PLOC = data[f"PLOC_{tag}"]
-                    print("current tag ttl:", current_tag_TTL)
-                    print("current tag ploc:", current_tag_PLOC)
+            try:
+                TTLs = [v for k, v in data.items() if k.startswith('TTL')]
+                PLOCs = [v for k, v in data.items() if k.startswith('PLOC')]
+                for index, tag in enumerate(self.tags):
+                    TLRi = TTLs[index] / PLOCs[index]
+                    self.append_to_result_file(f"TLR_{tag}_{index}", TLRi)
 
-                    # self.append_to_result_file(f"TLR_{tag}", int(current_tag_TTL) / int(current_tag_PLOC))
-                except Exception as error:
-                    self.append_to_result_file(f"TLR_{tag}", 0)
-                    print("error in TLR calculation", error)
-                    pass
+            except Exception as error:
+                self.append_to_result_file(f"TLR_{tag}", 0)
+                print("error in TLR calculation", error)
+                pass
 
     def calculate_MTLR(self):
         repo_name = self.github_repo["name"]

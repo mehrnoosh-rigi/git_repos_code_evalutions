@@ -17,6 +17,7 @@ def evaluate_repo(git_repository):
     git_repository.create_result_file()
     git_repository.go_to_prj_root()
     git_repository.list_tags()
+
     git_repository.checkout_last_tag()
     git_repository.get_lines_of_code()
     test_files = git_repository.find_test_files_for_each_tag()
@@ -38,6 +39,10 @@ def evaluate_repo(git_repository):
     back_to_main_dir()
     print("--------------Done--------------")
     return git_repository
+
+
+def calculate_TLR(git_repository):
+    git_repository.calculate_TLR(git_repository)
 
 
 def delete_repo(git_repository):
