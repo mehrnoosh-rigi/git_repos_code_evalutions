@@ -34,6 +34,7 @@ def check_validation(decoded_line):
            and ".pack" not in decoded_line \
            and ".idx" not in decoded_line \
            and "utils" not in decoded_line \
+           and "lib" not in decoded_line \
 
 
 

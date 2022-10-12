@@ -17,6 +17,7 @@ def evaluate_repo(git_repository):
     git_repository.create_result_file()
     git_repository.go_to_prj_root()
     git_repository.list_tags()
+    git_repository.get_hash_commits()
 
     git_repository.checkout_last_tag()
     git_repository.get_lines_of_code()
