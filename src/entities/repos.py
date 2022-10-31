@@ -1,12 +1,13 @@
+import asyncio
 import os
 import json
 import subprocess
 from git import Git
-from pathlib import Path
+from src.entities.result_file import ResultFile
 
 from src.repo_evaluation_metrics import helpers
 
-TTli = 0
+TTLi = 0
 Tdiffi = 0
 
 
@@ -52,20 +53,28 @@ def find_test_directory_for_each_tag():
 def get_lines_of_code_for_test_file(file_path):
     path = os.getcwd()
     file_name = os.path.basename(file_path)
+    print("I am here")
+    global TTli
+    TTli = 0
     for root, dirs, files in os.walk(path):
         if file_name in files:
             try:
                 os.system(f"cloc {file_path} --json --out=./cloc.json")
                 with open("./cloc.json", "r+") as outfile:
                     file_data = json.load(outfile)
-                    global TTli
+
                     TTli = file_data["header"]["n_lines"] + TTli
+                    return TTli
                     # if index > 0:
                     #     self.calculate_Tdiff(tag, file_data)
             except Exception as e:
                 print("Cloc lines of code for test file", e)
-
-    return TTli
+        os.system(f"cloc {file_path} --json --out=./cloc.json")
+        with open("./cloc.json", "r+") as outfile:
+            file_data = json.load(outfile)
+            TTli = file_data["header"]["n_lines"] + TTli
+            return TTli
+    # return TTli
 
 
 class GitRepository:
@@ -76,6 +85,7 @@ class GitRepository:
         self.project_root = f"results/cloned_programs/{github_repo['name']}"
         self.tags = []
         self.hash_commits = []
+        self.result_file = ResultFile(self.github_repo["name"], self.tool)
 
     def clone_repo(self):
         """
@@ -98,30 +108,31 @@ class GitRepository:
         """
         Create a result file as a Json file
         """
-        repo_name = self.github_repo["name"]
-        with open(f"results/repos_statistics/{self.tool}/{repo_name}.json", "w") as outfile:
-            data = {'repo_name': repo_name}
-            json.dump(data, outfile)
+        self.result_file.create_result_file()
+        # repo_name = self.github_repo["name"]
+        # with open(f"results/repos_statistics/{self.tool}/{repo_name}.json", "w") as outfile:
+        #     data = {'repo_name': repo_name}
+        #     json.dump(data, outfile)
 
-    def append_to_result_file(self, key, value):
-        """
-        Append to the result file
-        :param key: is the Key of object
-        :param value: is the value of object
-        """
-        repo_name = self.github_repo["name"]
-        try:
-            with open(f"../../repos_statistics/{self.tool}/{repo_name}.json", "r+") as outfile:
-                # First we load existing data into a dict.
-                file_data = json.load(outfile)
-                # Join new_data with file_data inside emp_details
-                file_data[key] = value
-                # Sets file's current position at offset.
-                outfile.seek(0)
-                # convert back to json.
-                json.dump(file_data, outfile, indent=4)
-        except Exception as e:
-            print("Error in appending to the result file", e, key, value)
+    # def append_to_result_file(self, key, value):
+    #    """
+    #    Append to the result file
+    #    :param key: is the Key of object
+    #    :param value: is the value of object
+    #    """
+    #    repo_name = self.github_repo["name"]
+    #    try:
+    #        with open(f"../../repos_statistics/{self.tool}/{repo_name}.json", "r+") as outfile:
+    #            # First we load existing data into a dict.
+    #            file_data = json.load(outfile)
+    #            # Join new_data with file_data inside emp_details
+    #            file_data[key] = value
+    #            # Sets file's current position at offset.
+    #            outfile.seek(0)
+    #            # convert back to json.
+    #            json.dump(file_data, outfile, indent=4)
+    #    except Exception as e:
+    #        print("Error in appending to the result file", e, key, value)
 
     def checkout_last_tag(self):
         """
@@ -142,7 +153,7 @@ class GitRepository:
             try:
                 dirty = subprocess.check_output(cmd).decode().strip()
                 self.tags = dirty.splitlines()
-                self.append_to_result_file("NTR", len(self.tags))
+                self.result_file.append_to_result_file("NTR", len(self.tags))
             except subprocess.CalledProcessError:
                 print("Unable to get git tags")
                 exit(1)
@@ -162,7 +173,6 @@ class GitRepository:
         """
         try:
             os.chdir("../")
-
             os.system(f"cloc {self.github_repo['name']} "
                       f"--ignore-whitespace "
                       f"--ignore-case "
@@ -173,7 +183,8 @@ class GitRepository:
 
             with open("cloc.json", "r+") as outfile:
                 file_data = json.load(outfile)
-            self.append_to_result_file(f"{key_subject}_{tag}", file_data["header"]["n_lines"])
+                self.result_file.append_to_result_file(f"{key_subject}_{tag}",
+                                                       file_data["header"]["n_lines"])
 
         except Exception as e:
             print("Cloc lines of code", e)
@@ -198,7 +209,7 @@ class GitRepository:
                     # Remove unnecessary files and take pure file name
                     valid_files = find_files_that_import_test_file(result, valid_files)
 
-            return valid_files
+                return valid_files
         except Exception as err:
             print("Error in take file tests", err)
 
@@ -216,7 +227,6 @@ class GitRepository:
 
             with open("./cloc.json", "r+") as outfile:
                 file_data = json.load(outfile)
-                print("file data>>>>", file_data)
                 test_file_LOC = file_data["SUM"]["code"]
                 current_tag_LOC = test_file_LOC
 
@@ -229,8 +239,9 @@ class GitRepository:
                 file_name = os.path.basename(file_path)
                 global Tdiffi
                 Tdiffi = int(current_tag_LOC) - int(prev_tag_LOC)
-                self.append_to_result_file(f"Tdiff-{self.tags[index]}-{self.tags[index - 1]}-{file_name}-{index}",
-                                           Tdiffi)
+                self.result_file.append_to_result_file(f"Tdiff-{self.tags[index]}-{self.tags[index - 1]}"
+                                                  f"-{file_name}-{index}",
+                                                  Tdiffi)
 
             Git(os.getcwd()).checkout(self.tags[index])
 
@@ -282,51 +293,15 @@ class GitRepository:
                 pdiffi = int(PLOC_current_LOC) - int(prev_PLOC_current_LOC)
                 if pdiffi == 0:
                     pdiffi = prev_PLOC_current_LOC
-                self.append_to_result_file(f"Pdiff-{self.tags[index]}-{self.tags[index - 1]}_{index}",
-                                           pdiffi)
+
+                self.result_file.append_to_result_file(f"Pdiff-{self.tags[index]}-"
+                                                  f"{self.tags[index - 1]}-{index}",
+                                                  pdiffi)
 
             Git(os.getcwd()).checkout(self.tags[index])
 
         except Exception as e:
             print(f"Production LOC {self.tags[index]} error", e)
-
-    def calculate_TMR(self):
-        with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
-            data = json.load(result_file)
-            try:
-                MRTL = [v for k, v in data.items() if k.startswith('MRTL')]
-                TLR = [v for k, v in data.items() if k.startswith('TLR')]
-                for index, tag in enumerate(self.tags):
-                    if len(self.tags) - 1 > index > 0:
-                        MRTLi = MRTL[index]
-                        TLRi_1 = TLR[index - 1]
-                        if TLRi_1 == 0:
-                            TLRi_1 = 1
-                        TMRi = MRTLi / TLRi_1
-                        self.append_to_result_file(f"TMR_{tag}_{index}", TMRi)
-
-            except Exception as error:
-                self.append_to_result_file(f"TMR_{tag}", 0.0)
-                print("error in TMR calculation", error)
-                pass
-
-    # def production_lines_of_code_tags_diff(self, index):
-    #     """
-    #     :param index: tag index
-    #     :return: Save to result file for each tag the tool files differences between i and i-1
-    #     """
-    #     try:
-    #         if index < len(self.tags) - 1:
-    #             os.system(
-    #                 f"cloc --git --diff {self.tags[index]} {self.tags[index + 1]} "
-    #                 f"--json --out=./cloc.json")
-    #             # os.chdir("../..")
-    #             with open("./cloc.json", "r+") as outfile:
-    #                 file_data = json.load(outfile)
-    #                 self.append_to_result_file(f"Pdiff{index}-{index + 1}", file_data["header"]["n_lines"])
-    #
-    #     except Exception as e:
-    #         print("Production lines of code tags different error", e)
 
     def take_metrics_for_each_tag(self, test_files):
         # For each tag, in self.tags:
@@ -334,23 +309,28 @@ class GitRepository:
         # 2- Save PLOCi
         # 3- take Tdiffi
         # 4- take Pdiffi
+
         for index, tag in enumerate(self.tags):
             Git(os.getcwd()).checkout(tag)
             self.get_lines_of_code(tag, "PLOC")  # PLOCi
-            global Tdiffi, TTli
+            global Tdiffi
+            global TTLi
+
             Tdiffi = 0
-            TTli = 0
+            TTLi = 0
             TTLOC = 0
             for file in test_files:
                 # it should calculate for each tag all results
                 TTLi = get_lines_of_code_for_test_file(file) + TTli  # TTLi
-                self.append_to_result_file(f"TTL_{tag}", TTLi)
+                # self.append_to_result_file(f"TTL_{tag}", TTLi)
 
-                if index > 0:
+                if index > 0 or len(self.tags) == 2:
                     self.tool_tags_diff_LOC(index, file)  # TDIFFi, i+1
                     # self.tool_tags_diff(index, file)
                     # self.append_to_result_file(f"Tdiff-{self.tags[index]}-{self.tags[index - 1]}",
                     #                            TTLOC)
+            self.result_file.append_to_result_file(f"TTL_{tag}",
+                                              TTLi)
             self.production_lines_of_code_tags_diff(index)  # PDIFFi, i-1
 
             # self.production_lines_of_code_tags_diff(index)  # PDIFFi, i+1
@@ -358,40 +338,52 @@ class GitRepository:
         self.calculate_MTLR()
         self.calculate_MRTL()
         self.calculate_TMR()
+        self.calculate_MMR()
 
     def delete_repo(self):
         os.system(f"rm -rf ./results/cloned_programs/{self.github_repo['name']}")
 
     def calculate_TLR(self):
-        with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
-            data = json.load(result_file)
+        # with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
+        #     data = json.load(result_file)
+
             try:
+                data = self.result_file.read_result_file()
                 TTLs = [v for k, v in data.items() if k.startswith('TTL')]
                 PLOCs = [v for k, v in data.items() if k.startswith('PLOC')]
-                for index, tag in enumerate(self.tags):
-                    TLRi = TTLs[index] / PLOCs[index]
-                    self.append_to_result_file(f"TLR_{tag}_{index}", TLRi)
+                if len(TTLs) == 0:
+                    self.result_file.append_to_result_file("TLR_total",
+                                                      0)
+                    return
+                else:
+                    for index, tag in enumerate(self.tags):
+                        TLRi = TTLs[index] / PLOCs[index]
+                        self.result_file.append_to_result_file(f"TLR_{tag}_{index}",
+                                                          TLRi)
 
             except Exception as error:
-                self.append_to_result_file(f"TLR_{tag}", 0)
+                self.result_file.append_to_result_file(f"TLR_",0)
                 print("error in TLR calculation", error)
                 pass
 
     def calculate_MTLR(self):
-        with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
-            data = json.load(result_file)
+        # with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
+        #     data = json.load(result_file)
             try:
+                data = self.result_file.read_result_file()
                 Tdiff = [v for k, v in data.items() if k.startswith('Tdiff')]
                 TTLs = [v for k, v in data.items() if k.startswith('TTL')]
-                print("Tdiff i>>", Tdiff)
-                print("TTLs >>", TTLs)
-                for index, tag in enumerate(self.tags):
-                    if len(self.tags) - 1 > index > 0:
-                        MTLRi = Tdiff[index] / TTLs[index - 1]
-                        self.append_to_result_file(f"MTLR_{tag}_{index}", MTLRi)
+                if len(Tdiff) == 0:
+                    self.result_file.append_to_result_file("MTLR_total", 0)
+                else:
+                    for index, tag in enumerate(self.tags):
+                        if len(self.tags) - 1 > index > 0 or len(self.tags) == 2:
+                            MTLRi = Tdiff[index] / TTLs[index - 1]
+                            self.result_file.append_to_result_file(f"MTLR_{tag}_{index}",
+                                                              MTLRi)
 
             except Exception as error:
-                self.append_to_result_file(f"MTLR_{tag}", 0)
+                self.result_file.append_to_result_file(f"MTLR_",0)
                 print("error in MTLR calculation", error)
                 pass
         #
@@ -416,20 +408,23 @@ class GitRepository:
         #             pass
 
     def calculate_MRTL(self):
-        with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
-            data = json.load(result_file)
+        # with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
+        #     data = json.load(result_file)
             try:
+                data = self.result_file.read_result_file()
                 Tdiff = [v for k, v in data.items() if k.startswith('Tdiff')]
                 Pdiff = [v for k, v in data.items() if k.startswith('Pdiff')]
-                print("Tdiff i>>", Tdiff)
-                print("TTLs >>", Pdiff)
-                for index, tag in enumerate(self.tags):
-                    if len(self.tags) - 1 > index > 0:
-                        MRTLi = Tdiff[index] / Pdiff[index - 1]
-                        self.append_to_result_file(f"MRTL_{tag}_{index}", MRTLi)
+                if len(Tdiff) == 0:
+                    self.result_file.append_to_result_file("MRTL_total", 0)
+                else:
+                    for index, tag in enumerate(self.tags):
+                        if len(self.tags) - 1 > index > 0 or len(self.tags) == 2:
+                            MRTLi = Tdiff[index] / Pdiff[index - 1]
+                            self.result_file.append_to_result_file(f"MRTL_{tag}_{index}",
+                                                              MRTLi)
 
             except Exception as error:
-                self.append_to_result_file(f"MRTL_{tag}", 0)
+                self.result_file.append_to_result_file(f"MRTL_", 0)
                 print("error in MRTL calculation", error)
                 pass
         #
@@ -452,3 +447,71 @@ class GitRepository:
         #         except Exception as error:
         #             print("Error in MTLR calculation:", error)
         #             pass
+
+    def calculate_TMR(self):
+        # with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
+        #     data = json.load(result_file)
+
+            try:
+                data = self.result_file.read_result_file()
+                MRTL = [v for k, v in data.items() if k.startswith('MRTL')]
+                TLR = [v for k, v in data.items() if k.startswith('TLR')]
+                if len(MRTL) == 0 or len(TLR):
+                    self.result_file.append_to_result_file("TMR_total", 0)
+                else:
+                    for index, tag in enumerate(self.tags):
+                        if len(self.tags) - 1 > index > 0 or len(self.tags) == 2:
+                            MRTLi = MRTL[index]
+                            TLRi_1 = TLR[index - 1]
+                            if TLRi_1 == 0:
+                                TLRi_1 = 1
+                            TMRi = MRTLi / TLRi_1
+                            self.result_file.append_to_result_file(f"TMR_{tag}_{index}", TMRi)
+
+            except Exception as error:
+                self.result_file.append_to_result_file(f"TMR_", 0.0)
+                print("error in TMR calculation", error)
+                pass
+
+    # def production_lines_of_code_tags_diff(self, index):
+    #     """
+    #     :param index: tag index
+    #     :return: Save to result file for each tag the tool files differences between i and i-1
+    #     """
+    #     try:
+    #         if index < len(self.tags) - 1:
+    #             os.system(
+    #                 f"cloc --git --diff {self.tags[index]} {self.tags[index + 1]} "
+    #                 f"--json --out=./cloc.json")
+    #             # os.chdir("../..")
+    #             with open("./cloc.json", "r+") as outfile:
+    #                 file_data = json.load(outfile)
+    #                 self.append_to_result_file(f"Pdiff{index}-{index + 1}", file_data["header"]["n_lines"])
+    #
+    #     except Exception as e:
+    #         print("Production lines of code tags different error", e)
+    #
+    def calculate_MMR(self):
+        # with open(f"../../repos_statistics/{self.tool}/{self.github_repo['name']}.json", "r") as result_file:
+        #     data = json.load(result_file)
+
+            try:
+                data = self.result_file.read_result_file()
+                TDiffs = [v for k, v in data.items() if k.startswith('Tdiff')]
+                NTR = [v for k, v in data.items() if k.startswith('NTR')]
+                count = 0
+                if len(TDiffs) == 0 or len(NTR):
+                    self.result_file.append_to_result_file("MMR_total", 0)
+                else:
+                    for index, tag in enumerate(self.tags):
+                        if len(self.tags) - 1 > index > 0 or len(self.tags) == 2:
+                            Tdiffi = TDiffs[index]
+                            if Tdiffi == 0:
+                                count = count + 1
+
+                    self.result_file.append_to_result_file(f"MMR_total", count / NTR[0])
+
+            except Exception as error:
+                self.result_file.append_to_result_file(f"MMR_", 0.0)
+                print("error in MMR calculation", error)
+                pass
