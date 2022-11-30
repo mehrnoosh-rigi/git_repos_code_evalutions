@@ -8,10 +8,8 @@ from src.entities.repos import GitRepository
 def dashboard():
     layout = [
         [sg.Input(), sg.FileBrowse("Select Result File", key="-IN-")],
-        [sg.Button("Clone Repo"),
-         sg.Button("Evaluate Repo"),
-         # sg.Button("TLR"),
-         sg.Button("Delete Repo"),
+        [sg.Button("TTL"),
+         sg.Button("TLR"),
          sg.Cancel()],
     ]
 
@@ -25,41 +23,22 @@ def dashboard():
         try:
             file_path = values["-IN-"]
             tool = "selenium" if "selenium" in file_path else "cypress"
-            with open(file_path) as f:
-                repos = json.load(f)
-                for repo in repos:
-                    git_repository = GitRepository(repo, tool)
-                    if event == "Clone Repo":
-                        try:
-                            from src.repo_evaluation_metrics.run_evaluation import clone_repo
-                            clone_repo(git_repository=git_repository)
-                        except OSError:
-                            print("OS Error", OSError)
-                    elif event == "Evaluate Repo":
-                        try:
-                            from src.repo_evaluation_metrics.run_evaluation import evaluate_repo
-                            evaluate_repo(git_repository)
-                        except NotImplementedError:
-                            print("Not Implemented Error", NotImplementedError)
-                    # elif event == "TLR":
-                    #     try:
-                    #         from src.repo_evaluation_metrics.run_evaluation import calculate_TLR
-                    #         calculate_TLR(git_repository)
-                    #     except NotImplementedError:
-                    #         print("Not Implemented Error", NotImplementedError)
-                    elif event == "Delete Repo":
-                        try:
-                            from src.repo_evaluation_metrics.run_evaluation import delete_repo
-                            delete_repo(git_repository)
-                        except OSError:
-                            print("Deletion Error", OSError)
+            with open(file_path, "r") as result_file:
+                data = json.load(result_file)
+                result_file.close()
+                if event == "TTL":
+                    try:
+                        from src.repo_extract_conclusion.run_conclusion import calculate_TLR
+                        calculate_TLR(data, file_path)
+                    except OSError:
+                        print("OS Error", OSError)
+                elif event == "TLR":
+                    try:
+                        print("TLR")
+                        # from src.repo_evaluation_metrics.run_evaluation import evaluate_repo
+                        # evaluate_repo(git_repository)
+                    except NotImplementedError:
+                        print("Not Implemented Error", NotImplementedError)
         except Exception as error:
             print("error>>>", error)
 
-
-# TODO:
-# Read selenium path files
-# select file
-# clone content of files
-# extract data
-# delete file
