@@ -43,5 +43,22 @@ def calculate_TLR(result_file, file_path):
     print("------Done TTL------")
 
 
+def calculate_TDiff(result_file, file_path):
+    TDiffs = [v for k, v in result_file.items() if k.startswith('Tdiff')]
+    TTLs_number = len(TDiffs)
+    if TTLs_number == 0:
+        append_to_result_file("Sum_TDiff", 0, file_path)
+        append_to_result_file("AVG_TDiff", 0, file_path)
+
+    else:
+        sum_TDiff = 0
+        for TDiff in TDiffs:
+            sum_TDiff = sum_TDiff - TDiff
+        average_TDiff = sum_TDiff / TTLs_number
+        append_to_result_file("Sum_TDiff", sum_TDiff, file_path)
+        append_to_result_file("AVG_TDiff", average_TDiff, file_path)
+    print("------Done TDiff------")
+
+
 def run():
     dashboard()

@@ -10,6 +10,7 @@ def dashboard():
         [sg.Input(), sg.FileBrowse("Select Result File", key="-IN-")],
         [sg.Button("TTL"),
          sg.Button("TLR"),
+         sg.Button("TDiff"),
          sg.Cancel()],
     ]
 
@@ -22,7 +23,6 @@ def dashboard():
 
         try:
             file_path = values["-IN-"]
-            tool = "selenium" if "selenium" in file_path else "cypress"
             with open(file_path, "r") as result_file:
                 data = json.load(result_file)
                 result_file.close()
@@ -30,6 +30,12 @@ def dashboard():
                     try:
                         from src.repo_extract_conclusion.run_conclusion import calculate_TLR
                         calculate_TLR(data, file_path)
+                    except OSError:
+                        print("OS Error", OSError)
+                elif event == "TDiff":
+                    try:
+                        from src.repo_extract_conclusion.run_conclusion import calculate_TDiff
+                        calculate_TDiff(data, file_path)
                     except OSError:
                         print("OS Error", OSError)
                 elif event == "TLR":
