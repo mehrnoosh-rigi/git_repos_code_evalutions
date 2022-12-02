@@ -28,8 +28,8 @@ def dashboard():
                 result_file.close()
                 if event == "TTL":
                     try:
-                        from src.repo_extract_conclusion.run_conclusion import calculate_TLR
-                        calculate_TLR(data, file_path)
+                        from src.repo_extract_conclusion.run_conclusion import calculate_TTL
+                        calculate_TTL(data, file_path)
                     except OSError:
                         print("OS Error", OSError)
                 elif event == "TDiff":
@@ -40,9 +40,8 @@ def dashboard():
                         print("OS Error", OSError)
                 elif event == "TLR":
                     try:
-                        print("TLR")
-                        # from src.repo_evaluation_metrics.run_evaluation import evaluate_repo
-                        # evaluate_repo(git_repository)
+                        from src.repo_extract_conclusion.run_conclusion import calculate_TLR
+                        calculate_TLR(data, file_path)
                     except NotImplementedError:
                         print("Not Implemented Error", NotImplementedError)
         except Exception as error:

@@ -27,7 +27,7 @@ def append_to_result_file(key, value, file):
         print("Error in appending to the result file", e, key, value)
 
 
-def calculate_TLR(result_file, file_path):
+def calculate_TTL(result_file, file_path):
     TTLs = [v for k, v in result_file.items() if k.startswith('TTL')]
     TTLs_number = len(TTLs)
     if TTLs_number == 0:
@@ -58,6 +58,23 @@ def calculate_TDiff(result_file, file_path):
         append_to_result_file("Sum_TDiff", sum_TDiff, file_path)
         append_to_result_file("AVG_TDiff", average_TDiff, file_path)
     print("------Done TDiff------")
+
+
+def calculate_TLR(result_file, file_path):
+    TLRs = [v for k, v in result_file.items() if k.startswith('TLR')]
+    TLRs_number = len(TLRs)
+    if TLRs_number == 0:
+        append_to_result_file("Sum_TLR", 0, file_path)
+        append_to_result_file("AVG_TLR", 0, file_path)
+
+    else:
+        sum_TLRs = 0
+        for TLR in TLRs:
+            sum_TLRs = sum_TLRs + TLR
+        average_TLR = sum_TLRs / TLRs_number
+        append_to_result_file("Sum_TLR", sum_TLRs, file_path)
+        append_to_result_file("AVG_TLR", average_TLR, file_path)
+    print("------Done TLR------")
 
 
 def run():
