@@ -110,5 +110,22 @@ def calculate_MRTL(result_file, file_path):
     print("------Done MRTL------")
 
 
+def calculate_TMR(result_file, file_path):
+    TMRs = [v for k, v in result_file.items() if k.startswith('TMR')]
+    TMRs_number = len(TMRs)
+    if TMRs_number == 0:
+        append_to_result_file("Sum_TMR", 0, file_path)
+        append_to_result_file("AVG_TMR", 0, file_path)
+
+    else:
+        sum_TMRs = 0
+        for TMR in TMRs:
+            sum_TMRs = sum_TMRs + TMR
+        average_TMR = sum_TMRs / TMRs_number
+        append_to_result_file("Sum_TMR", sum_TMRs, file_path)
+        append_to_result_file("AVG_TMR", average_TMR, file_path)
+    print("------Done TMR------")
+
+
 def run():
     dashboard()
