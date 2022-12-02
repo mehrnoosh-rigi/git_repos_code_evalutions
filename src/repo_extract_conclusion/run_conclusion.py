@@ -93,5 +93,22 @@ def calculate_MTLR(result_file, file_path):
     print("------Done MTLR------")
 
 
+def calculate_MRTL(result_file, file_path):
+    MRTLs = [v for k, v in result_file.items() if k.startswith('MRTL')]
+    MRTLs_number = len(MRTLs)
+    if MRTLs_number == 0:
+        append_to_result_file("Sum_MRTL", 0, file_path)
+        append_to_result_file("AVG_MRTL", 0, file_path)
+
+    else:
+        sum_MRTLs = 0
+        for MRTL in MRTLs:
+            sum_MRTLs = sum_MRTLs + MRTL
+        average_MRTL = sum_MRTLs / MRTLs_number
+        append_to_result_file("Sum_MRTL", sum_MRTLs, file_path)
+        append_to_result_file("AVG_MRTL", average_MRTL, file_path)
+    print("------Done MRTL------")
+
+
 def run():
     dashboard()
