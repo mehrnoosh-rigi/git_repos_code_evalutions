@@ -3,7 +3,6 @@ from src.gui.dashboard import dashboard
 
 
 def append_to_result_file(key, value, file):
-
     """
     Append to the result file
     :param file: result file
@@ -75,6 +74,23 @@ def calculate_TLR(result_file, file_path):
         append_to_result_file("Sum_TLR", sum_TLRs, file_path)
         append_to_result_file("AVG_TLR", average_TLR, file_path)
     print("------Done TLR------")
+
+
+def calculate_MTLR(result_file, file_path):
+    MTLRs = [v for k, v in result_file.items() if k.startswith('MTLR')]
+    MTLRs_number = len(MTLRs)
+    if MTLRs_number == 0:
+        append_to_result_file("Sum_MTLR", 0, file_path)
+        append_to_result_file("AVG_MTLR", 0, file_path)
+
+    else:
+        sum_MTLRs = 0
+        for MTLR in MTLRs:
+            sum_MTLRs = sum_MTLRs + MTLR
+        average_MTLR = sum_MTLRs / MTLRs_number
+        append_to_result_file("Sum_MTLR", sum_MTLRs, file_path)
+        append_to_result_file("AVG_MTLR", average_MTLR, file_path)
+    print("------Done MTLR------")
 
 
 def run():

@@ -11,6 +11,7 @@ def dashboard():
         [sg.Button("TTL"),
          sg.Button("TLR"),
          sg.Button("TDiff"),
+         sg.Button("MTLR"),
          sg.Cancel()],
     ]
 
@@ -42,6 +43,12 @@ def dashboard():
                     try:
                         from src.repo_extract_conclusion.run_conclusion import calculate_TLR
                         calculate_TLR(data, file_path)
+                    except NotImplementedError:
+                        print("Not Implemented Error", NotImplementedError)
+                elif event == "MTLR":
+                    try:
+                        from src.repo_extract_conclusion.run_conclusion import calculate_MTLR
+                        calculate_MTLR(data, file_path)
                     except NotImplementedError:
                         print("Not Implemented Error", NotImplementedError)
         except Exception as error:
