@@ -14,6 +14,7 @@ def dashboard():
          sg.Button("MTLR"),
          sg.Button("MRTL"),
          sg.Button("TMR"),
+         sg.Button("MRR"),
          sg.Cancel()],
     ]
 
@@ -63,6 +64,12 @@ def dashboard():
                     try:
                         from src.repo_extract_conclusion.run_conclusion import calculate_TMR
                         calculate_TMR(data, file_path)
+                    except NotImplementedError:
+                        print("Not Implemented Error", NotImplementedError)
+                elif event == "MRR":
+                    try:
+                        from src.repo_extract_conclusion.run_conclusion import calculate_MRR
+                        calculate_MRR(data, file_path)
                     except NotImplementedError:
                         print("Not Implemented Error", NotImplementedError)
         except Exception as error:

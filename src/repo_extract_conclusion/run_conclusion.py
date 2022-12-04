@@ -111,20 +111,34 @@ def calculate_MRTL(result_file, file_path):
 
 
 def calculate_TMR(result_file, file_path):
-    TMRs = [v for k, v in result_file.items() if k.startswith('TMR')]
-    TMRs_number = len(TMRs)
-    if TMRs_number == 0:
-        append_to_result_file("Sum_TMR", 0, file_path)
-        append_to_result_file("AVG_TMR", 0, file_path)
+    average_MRTL = [v for k, v in result_file.items() if k.startswith('AVG_MRTL')]
+    average_TLR = [v for k, v in result_file.items() if k.startswith('AVG_TLR')]
 
+    if len(average_TLR) == 0:
+        append_to_result_file("AVG_TMR", average_MRTL, file_path)
     else:
-        sum_TMRs = 0
-        for TMR in TMRs:
-            sum_TMRs = sum_TMRs + TMR
-        average_TMR = sum_TMRs / TMRs_number
-        append_to_result_file("Sum_TMR", sum_TMRs, file_path)
-        append_to_result_file("AVG_TMR", average_TMR, file_path)
+        TMR = average_MRTL[0] / average_TLR[0]
+        append_to_result_file("AVG_TMR", TMR, file_path)
     print("------Done TMR------")
+
+
+def calculate_MRR(result_file, file_path):
+    TDiffs = [v for k, v in result_file.items() if k.startswith('Tdiff')]
+    NTR = [v for k, v in result_file.items() if k.startswith('NTR')]
+    TDiffs_number = len(TDiffs)
+    if TDiffs_number == 0:
+        append_to_result_file("MRR", 0, file_path)
+    else:
+        MRR = 0
+        for TDiff in TDiffs:
+            if TDiff > 0:
+                MRR = MRR + 1
+        if NTR[0] > 0:
+            ratio = MRR / NTR[0]
+        else:
+            ratio = 0
+        append_to_result_file("MRR", ratio, file_path)
+    print("------Done MRR------")
 
 
 def run():
