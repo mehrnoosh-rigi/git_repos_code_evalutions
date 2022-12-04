@@ -111,14 +111,57 @@ def calculate_MRTL(result_file, file_path):
 
 
 def calculate_TMR(result_file, file_path):
-    average_MRTL = [v for k, v in result_file.items() if k.startswith('AVG_MRTL')]
-    average_TLR = [v for k, v in result_file.items() if k.startswith('AVG_TLR')]
-
-    if len(average_TLR) == 0:
-        append_to_result_file("AVG_TMR", average_MRTL, file_path)
+    Tdiffs = [v for k, v in result_file.items() if k.startswith('Tdiff')]
+    Pdiffs = [v for k, v in result_file.items() if k.startswith('Pdiff')]
+    # MRTLs = [v for k, v in result_file.items() if k.startswith('MRTL')]
+    TLRs = [v for k, v in result_file.items() if k.startswith('TLR')]
+    # print("TDiff index", Tdiffs, Tdiffs[2])
+    print(len(Tdiffs), len(Pdiffs), len(TLRs))
+    sum_TMR = 0
+    sum_MRTL = 0
+    if len(Tdiffs) == 0 or len(Pdiffs) == 0:
+        append_to_result_file("TMR", 0, file_path)
     else:
-        TMR = average_MRTL[0] / average_TLR[0]
-        append_to_result_file("AVG_TMR", TMR, file_path)
+        for index, PDiff in enumerate(Pdiffs):
+            # print("TDiff index", index)
+            if PDiff > 0:
+                MRTL = Tdiffs[index]/PDiff
+                sum_MRTL = sum_MRTL + MRTL
+            else:
+                MRTL = Tdiffs[index]
+                sum_MRTL = sum_MRTL + MRTL
+            append_to_result_file(f"MRTL-{index}", MRTL, file_path)
+        # for index, Tdiff in enumerate(Tdiffs):
+            print("-----MRTL added----")
+            if 0 < index < len(TLRs) - 1:
+                # print("Here")
+
+                # print("index", index, index - 1, TLRs[index-1])
+            #     print(">>>>>", TLRs[index - 1])
+            #     print("TLR index", TLRs[index - 1])
+                if TLRs[index - 1]:
+                    current_TMR = MRTL / TLRs[index - 1]
+                    # print("current TMR", current_TMR)
+                    sum_TMR = sum_TMR + current_TMR
+                    append_to_result_file(f"TMR-{index}", current_TMR, file_path)
+            else:
+                current_TMR = MRTL
+                sum_TMR = sum_TMR + current_TMR
+                append_to_result_file(f"TMR-{index}", current_TMR, file_path)
+
+        if len(TLRs) > 0:
+            append_to_result_file("SUM_MRTL", sum_MRTL, file_path)
+            append_to_result_file("AVG_MRTL", sum_TMR / len(TLRs), file_path)
+            append_to_result_file("SUM_TMR", sum_TMR, file_path)
+            append_to_result_file("AVG_TMR", sum_TMR/len(TLRs), file_path)
+        else:
+            append_to_result_file("SUM_MRTL", sum_MRTL, file_path)
+            append_to_result_file("AVG_MRTL", sum_TMR / len(Tdiffs), file_path)
+            append_to_result_file("SUM_TMR", sum_TMR, file_path)
+            append_to_result_file("AVG_TMR", sum_TMR / len(Tdiffs), file_path)
+
+
+
     print("------Done TMR------")
 
 
